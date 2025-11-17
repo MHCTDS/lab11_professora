@@ -68,10 +68,22 @@ class MyCallable implements Callable<Long> {
 
 //classe do método main
 public class FutureHello  {
-  private static final int N = 8;
+  private static final int N = 100;
   private static final int NTHREADS = 10;
 
+  static long ePrimo(long n) {
+    long i;
+    if(n<=1) return 0;
+    if(n==2) return 1;
+    if(n%2==0) return 0;
+    for(i=3; i< sqrt(n)+1; i+=2) {
+      if(n%i==0) return 0;
+    }
+    return 1;
+  }
+
   public static void main(String[] args) {
+    
     //cria um pool de threads (NTHREADS)
     ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
     //cria uma lista para armazenar referencias de chamadas assincronas
@@ -96,6 +108,11 @@ public class FutureHello  {
       Future<Long> submit = executor.submit(worker);
       list.add(submit);
     }
+    
+    long checksum=0;
+    for (long i = 1; i< N+1; i++) {
+    checksum+=ePrimo(i);
+    }
 
     //System.out.println(list.size());
     //pode fazer outras tarefas...
@@ -112,6 +129,12 @@ public class FutureHello  {
       }
     }
     System.out.println("Numero de primos " + sum);
+    if(checksum==sum){
+      System.out.println("Numero de primos correto");
+    }
+    else{
+      System.out.println("Numero de primos incorreto, deveria ser: " + String.valueOf(checksum));
+    }
     executor.shutdown();
   }
 }
